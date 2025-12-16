@@ -13,7 +13,7 @@ export function Footer() {
                  <img
                     src={logoImage}
                     alt="PrimeAutomate Systems"
-                    className="h-8 w-8 object-contain brightness-0 invert"
+                    className="h-8 w-8 object-contain rounded-md"
                   />
                 <span className="font-heading font-bold text-2xl text-white tracking-tight">
                   PrimeAutomate
