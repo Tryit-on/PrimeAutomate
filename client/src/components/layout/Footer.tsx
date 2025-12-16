@@ -8,8 +8,7 @@ export function Footer() {
       <div className="container mx-auto px-6">
         <div className="grid md:grid-cols-4 gap-12 mb-12">
           <div className="col-span-1 md:col-span-2">
-            <Link href="/">
-              <a className="flex items-center gap-3 mb-6">
+            <Link href="/" className="flex items-center gap-3 mb-6">
                  <img
                     src={logoImage}
                     alt="PrimeAutomate Systems"
@@ -18,7 +17,6 @@ export function Footer() {
                 <span className="font-heading font-bold text-2xl text-white tracking-tight">
                   PrimeAutomate
                 </span>
-              </a>
             </Link>
             <p className="text-slate-400 mb-6 max-w-sm leading-relaxed">
               Building smarter processes for smarter businesses. We design intelligent systems that save time, eliminate bottlenecks, and help you scale with confidence.

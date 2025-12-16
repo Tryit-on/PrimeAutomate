@@ -32,8 +32,7 @@ export function Navbar() {
       }`}
     >
       <div className="container mx-auto px-6 flex items-center justify-between">
-        <Link href="/">
-          <a className="flex items-center gap-3 group">
+        <Link href="/" className="flex items-center gap-3 group">
             <img
               src={logoImage}
               alt="PrimeAutomate Systems"
@@ -42,7 +41,6 @@ export function Navbar() {
             <span className="font-heading font-bold text-xl tracking-tight text-foreground">
               PrimeAutomate
             </span>
-          </a>
         </Link>
 
         {/* Desktop Nav */}
