@@ -144,7 +144,7 @@ export function IntakeForm() {
   }
 
   return (
-    <section id="intake-form" className="py-24 bg-slate-50">
+    <section id="contact" className="py-24 bg-slate-50">
       <div className="container mx-auto px-6 max-w-3xl">
         <div className="text-center mb-12">
           <h2 className="text-3xl md:text-4xl font-heading font-bold mb-4">

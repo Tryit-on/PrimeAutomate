@@ -44,11 +44,20 @@ export function Hero() {
           </p>
           
           <div className="flex flex-col sm:flex-row gap-4 mb-10">
-            <Button size="lg" className="rounded-full text-lg px-8 py-6 bg-primary hover:bg-primary/90 text-white shadow-lg shadow-primary/25">
+            <Button 
+              size="lg" 
+              className="rounded-full text-lg px-8 py-6 bg-primary hover:bg-primary/90 text-white shadow-lg shadow-primary/25 cursor-pointer"
+              onClick={() => document.getElementById('contact')?.scrollIntoView({ behavior: 'smooth' })}
+            >
               Start Your Automation
               <ArrowRight className="ml-2 h-5 w-5" />
             </Button>
-            <Button variant="outline" size="lg" className="rounded-full text-lg px-8 py-6 border-2 hover:bg-secondary/5">
+            <Button 
+              variant="outline" 
+              size="lg" 
+              className="rounded-full text-lg px-8 py-6 border-2 hover:bg-secondary/5 cursor-pointer"
+              onClick={() => document.getElementById('process')?.scrollIntoView({ behavior: 'smooth' })}
+            >
               View Our Process
             </Button>
           </div>

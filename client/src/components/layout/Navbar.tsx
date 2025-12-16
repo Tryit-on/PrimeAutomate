@@ -56,7 +56,10 @@ export function Navbar() {
               {link.name}
             </a>
           ))}
-          <Button className="bg-primary hover:bg-primary/90 text-white rounded-full px-6">
+          <Button 
+            className="bg-primary hover:bg-primary/90 text-white rounded-full px-6 cursor-pointer"
+            onClick={() => document.getElementById('contact')?.scrollIntoView({ behavior: 'smooth' })}
+          >
             Get Started <ChevronRight className="ml-1 h-4 w-4" />
           </Button>
         </nav>
@@ -84,7 +87,13 @@ export function Navbar() {
                 {link.name}
               </a>
             ))}
-            <Button className="w-full mt-4 bg-primary text-white">
+            <Button 
+              className="w-full mt-4 bg-primary text-white cursor-pointer"
+              onClick={() => {
+                setMobileMenuOpen(false);
+                document.getElementById('contact')?.scrollIntoView({ behavior: 'smooth' });
+              }}
+            >
               Get Started
             </Button>
           </nav>
