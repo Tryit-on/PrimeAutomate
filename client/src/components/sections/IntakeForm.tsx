@@ -19,6 +19,8 @@ import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/com
 import { motion, AnimatePresence } from "framer-motion";
 import { Loader2, CheckCircle, ArrowRight, ArrowLeft } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
+import { useMutation } from "@tanstack/react-query";
+import { apiRequest } from "@/lib/queryClient";
 
 // Schema definition (simplified for the multi-step flow)
 const formSchema = z.object({
@@ -82,17 +84,31 @@ export function IntakeForm() {
     mode: "onChange", 
   });
 
+  const submitMutation = useMutation({
+    mutationFn: async (data: FormValues) => {
+      const res = await apiRequest("POST", "/api/intake", data);
+      return res.json();
+    },
+    onSuccess: () => {
+      setIsSuccess(true);
+      toast({
+        title: "Assessment Received",
+        description: "We'll be in touch shortly with your automation blueprint.",
+      });
+    },
+    onError: () => {
+      toast({
+        title: "Something went wrong",
+        description: "Please try again or contact us directly.",
+        variant: "destructive",
+      });
+    },
+  });
+
   const onSubmit = async (data: FormValues) => {
     setIsSubmitting(true);
-    // Simulate API call
-    await new Promise((resolve) => setTimeout(resolve, 2000));
-    console.log(data);
+    await submitMutation.mutateAsync(data);
     setIsSubmitting(false);
-    setIsSuccess(true);
-    toast({
-      title: "Assessment Received",
-      description: "We'll be in touch shortly with your automation blueprint.",
-    });
   };
 
   const nextStep = async () => {
