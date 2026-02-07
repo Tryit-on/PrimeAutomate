@@ -50,11 +50,11 @@ export function Footer() {
             <ul className="space-y-4">
               <li className="flex items-start gap-3">
                 <Mail className="h-5 w-5 text-primary mt-1" />
-                <span>hello@primeautomate.com</span>
+                <span>admin@primeautomatesystems.com</span>
               </li>
               <li className="flex items-start gap-3">
                 <Phone className="h-5 w-5 text-primary mt-1" />
-                <span>+44 (0) 20 1234 5678</span>
+                <span>+44 7599596931</span>
               </li>
               <li className="flex items-start gap-3">
                 <MapPin className="h-5 w-5 text-primary mt-1" />
