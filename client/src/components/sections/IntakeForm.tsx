@@ -125,13 +125,13 @@ export function IntakeForm() {
     const isValid = await form.trigger(fieldsToValidate);
     if (isValid) {
       setCurrentStep((prev) => prev + 1);
-      window.scrollTo({ top: document.getElementById("intake-form")?.offsetTop! - 100, behavior: 'smooth' });
+      window.scrollTo({ top: document.getElementById("contact")?.offsetTop! - 100, behavior: 'smooth' });
     }
   };
 
   const prevStep = () => {
     setCurrentStep((prev) => prev - 1);
-    window.scrollTo({ top: document.getElementById("intake-form")?.offsetTop! - 100, behavior: 'smooth' });
+    window.scrollTo({ top: document.getElementById("contact")?.offsetTop! - 100, behavior: 'smooth' });
   };
 
   if (isSuccess) {
