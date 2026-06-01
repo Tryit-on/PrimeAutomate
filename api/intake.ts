@@ -1,6 +1,5 @@
-import type { Express, Request, Response, NextFunction } from "express";
-import { createServer, type Server } from "http";
-import { storage } from "./storage";
+import type { VercelRequest, VercelResponse } from "@vercel/node";
+import { storage } from "../server/storage";
 import { insertIntakeSchema } from "../shared/schema";
 import { ZodError } from "zod";
 import { fromZodError } from "zod-validation-error";
@@ -54,49 +53,21 @@ async function sendLeadNotification(data: InsertIntake) {
   }
 }
 
-function requireAdminKey(req: Request, res: Response, next: NextFunction) {
-  const key = req.headers["x-admin-key"] || req.query.key;
-  if (!process.env.ADMIN_API_KEY || key !== process.env.ADMIN_API_KEY) {
-    res.status(401).json({ message: "Unauthorized" });
-    return;
+export default async function handler(req: VercelRequest, res: VercelResponse) {
+  if (req.method !== "POST") {
+    return res.status(405).json({ message: "Method not allowed" });
   }
-  next();
-}
 
-export async function registerRoutes(
-  httpServer: Server,
-  app: Express
-): Promise<Server> {
-  app.get("/api/health", (_req, res) => {
-    res.json({ status: "ok" });
-  });
-
-  app.post("/api/intake", async (req, res) => {
-    try {
-      const data = insertIntakeSchema.parse(req.body);
-      const submission = await storage.createIntakeSubmission(data);
-      // fire-and-forget — don't block the response
-      sendLeadNotification(data);
-      res.status(201).json(submission);
-    } catch (error) {
-      if (error instanceof ZodError) {
-        res.status(400).json({ message: fromZodError(error).message });
-      } else {
-        console.error("Intake submission error:", error);
-        res.status(500).json({ message: "Failed to save submission" });
-      }
+  try {
+    const data = insertIntakeSchema.parse(req.body);
+    const submission = await storage.createIntakeSubmission(data);
+    sendLeadNotification(data);
+    return res.status(201).json(submission);
+  } catch (error) {
+    if (error instanceof ZodError) {
+      return res.status(400).json({ message: fromZodError(error).message });
     }
-  });
-
-  app.get("/api/admin/submissions", requireAdminKey, async (_req, res) => {
-    try {
-      const submissions = await storage.getIntakeSubmissions();
-      res.json(submissions);
-    } catch (error) {
-      console.error("Fetch submissions error:", error);
-      res.status(500).json({ message: "Failed to fetch submissions" });
-    }
-  });
-
-  return httpServer;
+    console.error("Intake submission error:", error);
+    return res.status(500).json({ message: "Failed to save submission" });
+  }
 }
