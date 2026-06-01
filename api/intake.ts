@@ -37,7 +37,7 @@ type InsertIntake = typeof intakeSubmissions.$inferInsert;
 async function sendLeadNotification(data: InsertIntake) {
   const apiKey = process.env.RESEND_API_KEY;
   const adminEmail = process.env.ADMIN_EMAIL;
-  const fromEmail = process.env.FROM_EMAIL || "onboarding@resend.dev";
+  const fromEmail = "onboarding@resend.dev";
   if (!apiKey || !adminEmail) return;
 
   const html = `
