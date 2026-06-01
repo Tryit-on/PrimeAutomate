@@ -91,7 +91,7 @@ export default async function handler(req, res) {
   try {
     const data = insertIntakeSchema.parse(req.body);
     const [submission] = await db.insert(intakeSubmissions).values(data).returning();
-    sendLeadNotification(data);
+    await sendLeadNotification(data);
     return res.status(201).json(submission);
   } catch (error) {
     if (error instanceof ZodError) {
