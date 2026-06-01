@@ -34,11 +34,7 @@ const insertIntakeSchema = createInsertSchema(intakeSubmissions).omit({
 async function sendLeadNotification(data) {
   const apiKey = process.env.RESEND_API_KEY;
   const adminEmail = process.env.ADMIN_EMAIL;
-  console.log("Resend: apiKey present =", !!apiKey, "| adminEmail =", adminEmail);
-  if (!apiKey || !adminEmail) {
-    console.log("Resend: aborting — missing apiKey or adminEmail");
-    return;
-  }
+  if (!apiKey || !adminEmail) return;
 
   const html = `
     <h2>New Lead: ${data.businessName}</h2>
@@ -74,7 +70,6 @@ async function sendLeadNotification(data) {
       }),
     });
     const result = await response.json();
-    console.log("Resend response:", response.status, JSON.stringify(result));
   } catch (err) {
     console.error("Resend fetch failed:", err);
   }
