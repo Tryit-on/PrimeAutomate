@@ -34,7 +34,11 @@ const insertIntakeSchema = createInsertSchema(intakeSubmissions).omit({
 async function sendLeadNotification(data) {
   const apiKey = process.env.RESEND_API_KEY;
   const adminEmail = process.env.ADMIN_EMAIL;
-  if (!apiKey || !adminEmail) return;
+  console.log("Resend: apiKey present =", !!apiKey, "| adminEmail =", adminEmail);
+  if (!apiKey || !adminEmail) {
+    console.log("Resend: aborting — missing apiKey or adminEmail");
+    return;
+  }
 
   const html = `
     <h2>New Lead: ${data.businessName}</h2>
@@ -59,7 +63,7 @@ async function sendLeadNotification(data) {
   `;
 
   try {
-    await fetch("https://api.resend.com/emails", {
+    const response = await fetch("https://api.resend.com/emails", {
       method: "POST",
       headers: { Authorization: `Bearer ${apiKey}`, "Content-Type": "application/json" },
       body: JSON.stringify({
@@ -69,8 +73,10 @@ async function sendLeadNotification(data) {
         html,
       }),
     });
+    const result = await response.json();
+    console.log("Resend response:", response.status, JSON.stringify(result));
   } catch (err) {
-    console.error("Failed to send lead notification email:", err);
+    console.error("Resend fetch failed:", err);
   }
 }
 
