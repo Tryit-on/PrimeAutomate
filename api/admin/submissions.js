@@ -1,4 +1,3 @@
-import type { VercelRequest, VercelResponse } from "@vercel/node";
 import { neon } from "@neondatabase/serverless";
 import { drizzle } from "drizzle-orm/neon-http";
 import { pgTable, serial, text, timestamp } from "drizzle-orm/pg-core";
@@ -25,7 +24,7 @@ const intakeSubmissions = pgTable("intake_submissions", {
   createdAt: timestamp("created_at").defaultNow().notNull(),
 });
 
-export default async function handler(req: VercelRequest, res: VercelResponse) {
+export default async function handler(req, res) {
   if (req.method !== "GET") {
     return res.status(405).json({ message: "Method not allowed" });
   }
@@ -35,7 +34,7 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
     return res.status(401).json({ message: "Unauthorized" });
   }
 
-  const sql = neon(process.env.DATABASE_URL!);
+  const sql = neon(process.env.DATABASE_URL);
   const db = drizzle(sql);
 
   try {

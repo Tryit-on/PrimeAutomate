@@ -1,4 +1,3 @@
-import type { VercelRequest, VercelResponse } from "@vercel/node";
 import { neon } from "@neondatabase/serverless";
 import { drizzle } from "drizzle-orm/neon-http";
 import { pgTable, serial, text, timestamp } from "drizzle-orm/pg-core";
@@ -32,12 +31,9 @@ const insertIntakeSchema = createInsertSchema(intakeSubmissions).omit({
   createdAt: true,
 });
 
-type InsertIntake = typeof intakeSubmissions.$inferInsert;
-
-async function sendLeadNotification(data: InsertIntake) {
+async function sendLeadNotification(data) {
   const apiKey = process.env.RESEND_API_KEY;
   const adminEmail = process.env.ADMIN_EMAIL;
-  const fromEmail = "onboarding@resend.dev";
   if (!apiKey || !adminEmail) return;
 
   const html = `
@@ -50,9 +46,9 @@ async function sendLeadNotification(data: InsertIntake) {
       <tr><td style="padding:8px;border:1px solid #eee;font-weight:bold">Website</td><td style="padding:8px;border:1px solid #eee">${data.website || "—"}</td></tr>
       <tr><td style="padding:8px;border:1px solid #eee;font-weight:bold">Business Type</td><td style="padding:8px;border:1px solid #eee">${data.businessType}</td></tr>
       <tr><td style="padding:8px;border:1px solid #eee;font-weight:bold">Team Size</td><td style="padding:8px;border:1px solid #eee">${data.teamSize}</td></tr>
-      <tr><td style="padding:8px;border:1px solid #eee;font-weight:bold">Customer Channels</td><td style="padding:8px;border:1px solid #eee">${(data.customerChannels as string[]).join(", ")}</td></tr>
-      <tr><td style="padding:8px;border:1px solid #eee;font-weight:bold">Pain Points</td><td style="padding:8px;border:1px solid #eee">${(data.painPoints as string[]).join(", ")}</td></tr>
-      <tr><td style="padding:8px;border:1px solid #eee;font-weight:bold">Processes to Automate</td><td style="padding:8px;border:1px solid #eee">${(data.processesToAutomate as string[]).join(", ")}</td></tr>
+      <tr><td style="padding:8px;border:1px solid #eee;font-weight:bold">Customer Channels</td><td style="padding:8px;border:1px solid #eee">${data.customerChannels.join(", ")}</td></tr>
+      <tr><td style="padding:8px;border:1px solid #eee;font-weight:bold">Pain Points</td><td style="padding:8px;border:1px solid #eee">${data.painPoints.join(", ")}</td></tr>
+      <tr><td style="padding:8px;border:1px solid #eee;font-weight:bold">Processes to Automate</td><td style="padding:8px;border:1px solid #eee">${data.processesToAutomate.join(", ")}</td></tr>
       <tr><td style="padding:8px;border:1px solid #eee;font-weight:bold">Main Goal</td><td style="padding:8px;border:1px solid #eee">${data.mainGoal}</td></tr>
       <tr><td style="padding:8px;border:1px solid #eee;font-weight:bold">Timeline</td><td style="padding:8px;border:1px solid #eee">${data.timeline}</td></tr>
       <tr><td style="padding:8px;border:1px solid #eee;font-weight:bold">Budget</td><td style="padding:8px;border:1px solid #eee">${data.budget}</td></tr>
@@ -67,7 +63,7 @@ async function sendLeadNotification(data: InsertIntake) {
       method: "POST",
       headers: { Authorization: `Bearer ${apiKey}`, "Content-Type": "application/json" },
       body: JSON.stringify({
-        from: fromEmail,
+        from: "onboarding@resend.dev",
         to: adminEmail,
         subject: `New Lead: ${data.businessName} — ${data.mainGoal}`,
         html,
@@ -78,18 +74,18 @@ async function sendLeadNotification(data: InsertIntake) {
   }
 }
 
-export default async function handler(req: VercelRequest, res: VercelResponse) {
+export default async function handler(req, res) {
   if (req.method !== "POST") {
     return res.status(405).json({ message: "Method not allowed" });
   }
 
-  const sql = neon(process.env.DATABASE_URL!);
+  const sql = neon(process.env.DATABASE_URL);
   const db = drizzle(sql);
 
   try {
     const data = insertIntakeSchema.parse(req.body);
     const [submission] = await db.insert(intakeSubmissions).values(data).returning();
-    sendLeadNotification(data as InsertIntake);
+    sendLeadNotification(data);
     return res.status(201).json(submission);
   } catch (error) {
     if (error instanceof ZodError) {
